@@ -4,8 +4,11 @@ from entities.Player import Player
 from entities.environment.Fire import Fire
 from entities.environment.Block import Block
 from constants import FPS, HEIGHT, WIDTH, BLOCK_SIZE, SCROLL_AREA_WIDTH
+from services.MusicService import MusicService
 from services.MovementService import MovementService
 from services.GraphicsService import GraphicsService
+
+from os.path import join
 
 
 class Game:
@@ -15,6 +18,7 @@ class Game:
         self.window = pygame.display.set_mode((WIDTH, HEIGHT))
         self.offsetX = 0
         self.player = Player(0, 450, 50, 50)
+        self.music = MusicService()
         self.handleGameLoop()
 
     def handleGameLoop(self):
@@ -24,7 +28,7 @@ class Game:
         fire = Fire(100, HEIGHT - BLOCK_SIZE - 64, 16, 32)
         fire.on()
         floor = [Block(i * BLOCK_SIZE, HEIGHT - BLOCK_SIZE, BLOCK_SIZE)
-                 for i in range(-WIDTH // BLOCK_SIZE, WIDTH * 2 // BLOCK_SIZE)]
+                 for i in range(0, 600)]
         objects = [*floor, Block(0, HEIGHT - BLOCK_SIZE * 2,     BLOCK_SIZE),
                    Block(BLOCK_SIZE * 3, HEIGHT - BLOCK_SIZE * 4, BLOCK_SIZE), fire]
 
@@ -48,7 +52,6 @@ class Game:
             GraphicsService.draw(self.window, bg, image,
                                  self.player, objects, self.offsetX)
             self.handleBackgroundScrolling(self.player)
-
         pygame.quit()
         quit()
 
