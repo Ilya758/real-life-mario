@@ -10,7 +10,7 @@ class CollisionService:
             if pygame.sprite.collide_mask(player, obj):
                 if dy > 0:
                     player.rect.bottom = obj.rect.top
-                    player.landed()
+                    player.land()
                 elif dy < 0:
                     player.rect.top = obj.rect.bottom
                     player.hitHead()

@@ -1,10 +1,12 @@
 import pygame
 from os import listdir
 from os.path import isfile, join
-from constants import HEIGHT, WIDTH
+from constants import HEIGHT, WIDTH, SCROLL_AREA_WIDTH
 
 
 class GraphicsService:
+    offsetX = 0
+
     @staticmethod
     def flip(sprites):
         return [pygame.transform.flip(sprite, True, False) for sprite in sprites]
@@ -64,12 +66,19 @@ class GraphicsService:
         return tiles, image
 
     @staticmethod
-    def draw(window, bg, bg_image, player, objects, offsetX):
+    def draw(window, bg, bg_image, player, objects):
         for tile in bg:
             window.blit(bg_image, tuple(tile))
 
         for obj in objects:
-            obj.draw(window, offsetX)
+            obj.draw(window, GraphicsService.offsetX)
 
-        player.draw(window, offsetX)
+        player.draw(window, GraphicsService.offsetX)
+        GraphicsService.handleBackgroundScrolling(player)
         pygame.display.update()
+
+    @staticmethod
+    def handleBackgroundScrolling(player):
+        if (player.rect.right - GraphicsService.offsetX >= WIDTH - SCROLL_AREA_WIDTH
+                and player.x_vel > 0) or (player.rect.left - GraphicsService.offsetX <= SCROLL_AREA_WIDTH and player.x_vel < 0):
+            GraphicsService.offsetX += player.x_vel
