@@ -1,7 +1,6 @@
 import pygame
-
-from entities.environment.Object import Object
-from services.GraphicsService import GraphicsService
+from entities.environment.abstract import Object
+from services import GraphicsService
 
 
 class Fire(Object):
@@ -25,7 +24,6 @@ class Fire(Object):
         sprites = self.fire[self.animation_name]
         spriteIndex = (self.animation_count //
                        self.ANIMATION_DELAY) % len(sprites)
-
         self.image = sprites[spriteIndex]
         self.animation_count += 1
         self.rect = self.image .get_rect(topleft=(self.rect.x, self.rect.y))
