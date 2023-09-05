@@ -1,8 +1,7 @@
-import sys
 import pygame
 from os.path import join
 
-from constants.main import TrackName
+from enums import TrackName
 
 
 class MusicService:
