@@ -1,6 +1,7 @@
 import pygame
-
-from services.GraphicsService import GraphicsService
+from constants import PLAYER_VEL
+from enums import GameEventType, Jump, Y_AxisBoundary
+from services import CollisionService, GraphicsService
 
 
 class Player(pygame.sprite.Sprite):
@@ -17,16 +18,16 @@ class Player(pygame.sprite.Sprite):
         self.direction = 'left'
         self.animation_count = 0
         self.fall_count = 0
-        self.jump_count = 0
+        self.jumpCount = Jump.Default.value
         self.hit = False
         self.hitCount = 0
 
     def jump(self):
         self.y_vel = -self.GRAVITY * 8
         self.animation_count = 0
-        self.jump_count += 1
+        self.jumpCount += 1
 
-        if self.jump_count == 1:
+        if self.jumpCount == Jump.Single.value:
             self.fall_count = 0
 
     def move(self, dx, dy):
@@ -37,42 +38,77 @@ class Player(pygame.sprite.Sprite):
         self.hit = True
         self.hitCount = 0
 
-    def move_left(self, vel):
+    def moveLeft(self, vel):
         self.x_vel = -vel
 
         if self.direction != 'left':
             self.direction = 'left'
             self.animation_count = 0
 
-    def move_right(self, val):
+    def moveRight(self, val):
         self.x_vel = +val
 
         if self.direction != 'right':
             self.direction = 'right'
             self.animation_count = 0
 
-    def landed(self):
+    def land(self):
         self.fall_count = 0
         self.y_vel = 0
-        self.jump_count = 0
+        self.jumpCount = Jump.Default.value
 
     def hitHead(self):
         self.count = 0
         self.y_vel *= -1
 
-    def loop(self, fps):
+    def recoverFromFall(self):
+        self.GRAVITY = 1
+
+    def loop(self, fps, objects):
         self.y_vel += min(1, (self.fall_count / fps) * self.GRAVITY)
         self.move(self.x_vel, self.y_vel)
+        self.checkTheLowestGameBoundary()
 
         if self.hit:
             self.hitCount += 1
 
-        if self.hitCount > fps * 2:
+        if self.hitCount > fps:
             self.hit = False
             self.hitCount = 0
 
         self.fall_count += 1
         self.updateSprite()
+        self.handleMove(objects)
+
+    def checkTheLowestGameBoundary(self):
+        if self.rect.y > Y_AxisBoundary.Lowest.value:
+            self.rect.y = Y_AxisBoundary.Highest.value
+            self.y_vel = 0
+            self.GRAVITY = 0.1
+            self.makeHit()
+            pygame.time.set_timer(pygame.event.Event(
+                GameEventType.OutOfTheLowestBoundary.value), 1000, loops=1)
+
+    def handleMove(self, objects):
+        keys = pygame.key.get_pressed()
+        self.x_vel = 0
+        collideLeft = CollisionService.collide(
+            self, objects, -PLAYER_VEL * 2)
+        collideRight = CollisionService.collide(
+            self, objects, PLAYER_VEL * 2)
+
+        if keys[pygame.K_a] and not collideLeft:
+            self.moveLeft(PLAYER_VEL)
+        if keys[pygame.K_d] and not collideRight:
+            self.moveRight(PLAYER_VEL)
+
+        verticalCollide = CollisionService.handleVerticalCollisions(
+            self, objects, self.y_vel)
+        toCheck = [collideLeft, collideRight, *verticalCollide]
+
+        for obj in toCheck:
+            if obj and obj.name == 'fire':
+                self.makeHit()
 
     def updateSprite(self):
         spriteSheet = 'idle'
@@ -80,12 +116,15 @@ class Player(pygame.sprite.Sprite):
         if self.hit:
             spriteSheet = 'hit'
         elif self.y_vel < 0:
-            if self.jump_count == 1:
-                spriteSheet = 'jump'
-            elif self.jump_count == 2:
-                spriteSheet = 'double_jump'
+            match self.jumpCount:
+                case Jump.Single.value:
+                    spriteSheet = 'jump'
+                case Jump.Double.value:
+                    spriteSheet = 'double_jump'
+
         elif self.y_vel > self.GRAVITY * 2:
             spriteSheet = 'fall'
+            self.jumpCount = Jump.Double.value
         elif self.x_vel != 0:
             spriteSheet = 'run'
 
