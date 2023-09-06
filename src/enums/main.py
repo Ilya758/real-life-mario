@@ -14,6 +14,11 @@ class Jump(Enum):
     Double = 2
 
 
+class ChannelAction(Enum):
+    Stop = 0
+    Play = 1
+
+
 class Y_AxisBoundary(Enum):
     Highest = 50
     Lowest = 500

@@ -1,7 +1,8 @@
 import pygame
 from constants import PLAYER_VEL
 from enums import GameEventType, Jump, Y_AxisBoundary
-from services import CollisionService, GraphicsService
+from enums.main import ChannelAction
+from services import CollisionService, GraphicsService, MusicService
 
 
 class Player(pygame.sprite.Sprite):
@@ -10,7 +11,8 @@ class Player(pygame.sprite.Sprite):
         'MainCharacters', 'MaskDude', 32, 32, True)
     ANIMATION_DELAY = 3
 
-    def __init__(self, x, y, w, h) -> None:
+    def __init__(self, rect, music) -> None:
+        x, y, w, h = rect
         self.rect = pygame.Rect(x, y, w, h)
         self.x_vel = 0
         self.y_vel = 0
@@ -21,11 +23,20 @@ class Player(pygame.sprite.Sprite):
         self.jumpCount = Jump.Default.value
         self.hit = False
         self.hitCount = 0
+        self.music = music
 
     def jump(self):
         self.y_vel = -self.GRAVITY * 8
         self.animation_count = 0
         self.jumpCount += 1
+
+        match self.jumpCount:
+            case Jump.Single.value:
+                self.music.triggerSoundAction('jump', ChannelAction.Play.value)
+                self.music.triggerSoundAction('fart', ChannelAction.Stop.value)
+            case Jump.Double.value:
+                self.music.triggerSoundAction('jump', ChannelAction.Stop.value)
+                self.music.triggerSoundAction('fart', ChannelAction.Play.value)
 
         if self.jumpCount == Jump.Single.value:
             self.fall_count = 0
@@ -82,6 +93,7 @@ class Player(pygame.sprite.Sprite):
 
     def checkTheLowestGameBoundary(self):
         if self.rect.y > Y_AxisBoundary.Lowest.value:
+            self.music.triggerSoundAction('death', ChannelAction.Play.value)
             self.rect.y = Y_AxisBoundary.Highest.value
             self.y_vel = 0
             self.GRAVITY = 0.1

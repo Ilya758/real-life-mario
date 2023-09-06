@@ -9,9 +9,10 @@ class Game:
         pygame.init()
         pygame.display.set_caption('REAL-LIFE-MARIO')
         self.window = pygame.display.set_mode((WIDTH, HEIGHT))
-        self.player = Player(0, 450, 50, 50)
-        self.eventManager = EventManagerService(self.player)
         self.music = MusicService()
+        self.player = Player([0, 450, 50, 50], self.music)
+        self.eventManager = EventManagerService(self.player)
+        self.music.playMainTrack()
         self.handleGameLoop()
 
     def handleGameLoop(self):
