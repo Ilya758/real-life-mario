@@ -26,7 +26,6 @@ class GraphicsService:
         pygame.display.set_mode((WIDTH, HEIGHT))
         path = join("../assets", dir1, dir2)
         images = [f for f in listdir(path) if isfile(join(path, f))]
-
         all_sprites = {}
 
         for image in images:
@@ -46,7 +45,7 @@ class GraphicsService:
                 all_sprites[pathToReplace +
                             "_left"] = GraphicsService.flip(sprites)
             else:
-                all_sprites[image.replace(".png", "")] = sprites
+                all_sprites[pathToReplace] = sprites
 
         return all_sprites
 
@@ -66,15 +65,27 @@ class GraphicsService:
         return tiles, image
 
     @staticmethod
-    def draw(window, bg, bg_image, player, objects):
+    def renderUI(player, window):
+        healthbar = pygame.image.load(
+            '../assets/ui/health.png').convert_alpha()
+        healthbar = pygame.transform.scale(healthbar, (150, 280))
+        yCoord = 80 * (3 - player.lifes) if player.lifes > 0 else 80 * 3
+        window.blit(healthbar, (20, 20), pygame.Rect(
+            0, yCoord, 150, 40))
+
+    @staticmethod
+    def draw(window, player, objects):
+        bg, image = GraphicsService.getBackground('Blue.png')
+
         for tile in bg:
-            window.blit(bg_image, tuple(tile))
+            window.blit(image, tuple(tile))
 
         for obj in objects:
             obj.draw(window, GraphicsService.offsetX)
 
         player.draw(window, GraphicsService.offsetX)
         GraphicsService.handleBackgroundScrolling(player)
+        GraphicsService.renderUI(player, window)
         pygame.display.update()
 
     @staticmethod

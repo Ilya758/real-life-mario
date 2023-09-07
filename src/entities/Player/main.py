@@ -1,7 +1,6 @@
 import pygame
 from constants import PLAYER_VEL
-from enums import GameEventType, Jump, Y_AxisBoundary
-from enums.main import ChannelAction
+from enums import GameEventType, Jump, Y_AxisBoundary, ChannelAction
 from services import CollisionService, GraphicsService, MusicService
 
 
@@ -12,8 +11,7 @@ class Player(pygame.sprite.Sprite):
     ANIMATION_DELAY = 3
 
     def __init__(self, rect, music) -> None:
-        x, y, w, h = rect
-        self.rect = pygame.Rect(x, y, w, h)
+        self.rect = pygame.Rect(rect)
         self.x_vel = 0
         self.y_vel = 0
         self.mask = None
@@ -24,19 +22,13 @@ class Player(pygame.sprite.Sprite):
         self.hit = False
         self.hitCount = 0
         self.music = music
+        self.lifes = 3
 
     def jump(self):
         self.y_vel = -self.GRAVITY * 8
         self.animation_count = 0
         self.jumpCount += 1
-
-        match self.jumpCount:
-            case Jump.Single.value:
-                self.music.triggerSoundAction('jump', ChannelAction.Play.value)
-                self.music.triggerSoundAction('fart', ChannelAction.Stop.value)
-            case Jump.Double.value:
-                self.music.triggerSoundAction('jump', ChannelAction.Stop.value)
-                self.music.triggerSoundAction('fart', ChannelAction.Play.value)
+        self.music.toggleJumpSound(self.jumpCount)
 
         if self.jumpCount == Jump.Single.value:
             self.fall_count = 0
@@ -48,6 +40,7 @@ class Player(pygame.sprite.Sprite):
     def makeHit(self):
         self.hit = True
         self.hitCount = 0
+        self.lifes -= 1
 
     def moveLeft(self, vel):
         self.x_vel = -vel
@@ -120,7 +113,8 @@ class Player(pygame.sprite.Sprite):
 
         for obj in toCheck:
             if obj and obj.name == 'fire':
-                self.makeHit()
+                if not self.hit:
+                    self.makeHit()
 
     def updateSprite(self):
         spriteSheet = 'idle'
@@ -133,7 +127,6 @@ class Player(pygame.sprite.Sprite):
                     spriteSheet = 'jump'
                 case Jump.Double.value:
                     spriteSheet = 'double_jump'
-
         elif self.y_vel > self.GRAVITY * 2:
             spriteSheet = 'fall'
             self.jumpCount = Jump.Double.value

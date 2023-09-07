@@ -1,7 +1,6 @@
 import pygame
 from os.path import join
-
-from enums import TrackName, ChannelAction
+from enums import ChannelAction, Jump, TrackName
 
 
 class MusicService:
@@ -26,9 +25,6 @@ class MusicService:
         self.music.load(join(f'../assets/music/{trackPath}.mp3'))
         self.music.play(loops=-1)
 
-    def setVolume(self, volume):
-        self.music.set_volume(volume)
-
     def triggerSoundAction(self, name, action: ChannelAction):
         [id, sound] = self.channels[name]
         channel = self.mixer.Channel(id)
@@ -38,3 +34,12 @@ class MusicService:
                 channel.play(sound, loops=0)
             case ChannelAction.Stop.value:
                 channel.stop()
+
+    def toggleJumpSound(self, jump: Jump):
+        match jump:
+            case Jump.Single.value:
+                self.triggerSoundAction('jump', ChannelAction.Play.value)
+                self.triggerSoundAction('fart', ChannelAction.Stop.value)
+            case Jump.Double.value:
+                self.triggerSoundAction('jump', ChannelAction.Stop.value)
+                self.triggerSoundAction('fart', ChannelAction.Play.value)

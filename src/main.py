@@ -10,14 +10,13 @@ class Game:
         pygame.display.set_caption('REAL-LIFE-MARIO')
         self.window = pygame.display.set_mode((WIDTH, HEIGHT))
         self.music = MusicService()
+        self.clock = pygame.time.Clock()
         self.player = Player([0, 450, 50, 50], self.music)
         self.eventManager = EventManagerService(self.player)
         self.music.playMainTrack()
         self.handleGameLoop()
 
     def handleGameLoop(self):
-        clock = pygame.time.Clock()
-        bg, image = GraphicsService.getBackground('Blue.png')
         fire = Fire(100, HEIGHT - BLOCK_SIZE - 64, 16, 32)
         fire.on()
         ground = Ground(self.window).grid
@@ -25,10 +24,10 @@ class Game:
                    Block(BLOCK_SIZE * 3, HEIGHT - BLOCK_SIZE * 4, BLOCK_SIZE), fire]
 
         while True:
-            clock.tick(FPS)
-            self.eventManager.handleEvents()
+            self.clock.tick(FPS)
             self.player.loop(FPS, objects)
-            GraphicsService.draw(self.window, bg, image, self.player, objects)
+            self.eventManager.handleEvents()
+            GraphicsService.draw(self.window, self.player, objects)
             fire.loop()
 
 
