@@ -12,11 +12,11 @@ class GraphicsService:
         return [pygame.transform.flip(sprite, True, False) for sprite in sprites]
 
     @staticmethod
-    def getBlock(size):
+    def getBlock(size, isGlass = False):
         path = join('../assets', 'Terrain', 'Terrain.png')
         image = pygame.image.load(path).convert_alpha()
         surface = pygame.Surface((size, size), pygame.SRCALPHA, 32)
-        rect = pygame.Rect(0, 64 + 64, size, size)
+        rect = pygame.Rect(0, 0 if isGlass else 128, size, size)
         surface.blit(image, (0, 0), rect)
 
         return pygame.transform.scale2x(surface)

@@ -20,8 +20,7 @@ class Game:
         fire = Fire(100, HEIGHT - BLOCK_SIZE - 64, 16, 32)
         fire.on()
         ground = Ground(self.window).grid
-        objects = [*ground, Block(0, HEIGHT - BLOCK_SIZE * 2,     BLOCK_SIZE),
-                   Block(BLOCK_SIZE * 3, HEIGHT - BLOCK_SIZE * 4, BLOCK_SIZE), fire]
+        objects = [*ground, Block(0, HEIGHT - BLOCK_SIZE * 2,     BLOCK_SIZE), fire]
 
         while True:
             self.clock.tick(FPS)

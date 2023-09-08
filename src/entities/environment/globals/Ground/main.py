@@ -17,16 +17,16 @@ class Ground:
     def grid(self, blocks):
         self._grid = blocks
 
-    def prepareBlocks(self, start, end, isHole=False, pos=1):
-        return [Block(i * BLOCK_SIZE, HEIGHT - BLOCK_SIZE * pos, BLOCK_SIZE, isHole)
+    def prepareBlocks(self, start, end, isHole=False, pos=1, isGlass = False):
+        return [Block(i * BLOCK_SIZE, HEIGHT - BLOCK_SIZE * pos, BLOCK_SIZE, isGlass, isHole)
                 for i in range(start, end)]
 
     def prepare(self):
         middle = 4.5
         self.groundFactory()
-        self.groundFactory(middle)
+        self.groundFactory(middle, True)
 
-    def groundFactory(self, pos=1):
+    def groundFactory(self, pos=1, isGlass = False):
         cooldown = False
         to = 450
         step = 2
@@ -35,15 +35,14 @@ class Ground:
             len = random.randint(0, step)
             if (cooldown):
                 self.grid.extend(self.prepareBlocks(
-                    tile, tile + len, False, pos))
+                    tile, tile + len, False, pos, isGlass))
                 cooldown = False
             else:
                 self.grid.extend(self.prepareBlocks(
-                    tile, tile + len, hole, pos))
+                    tile, tile + len, hole, pos, isGlass))
                 cooldown = True
             tile += len
 
-# TODO: replace ground
+# TODO:
 # look at dynamic backgrounds
 # change main player sprite
-# create fart animation on double jump

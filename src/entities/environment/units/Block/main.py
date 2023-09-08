@@ -5,9 +5,9 @@ from services import GraphicsService
 
 
 class Block(Object):
-    def __init__(self, x, y, size, isHole=False):
+    def __init__(self, x, y, size, isGlass = False, isHole=False):
         super().__init__(x, y, size, size)
-        block = GraphicsService.getBlock(size)
+        block = GraphicsService.getBlock(size, isGlass)
         self.image.blit(block, self.getBody(isHole))
         self.mask = pygame.mask.from_surface(self.image)
 
