@@ -25,7 +25,7 @@ class Player(pygame.sprite.Sprite):
         self.lifes = 3
 
     def jump(self):
-        self.y_vel = -self.GRAVITY * 8
+        self.y_vel = -self.GRAVITY * 12
         self.animation_count = 0
         self.jumpCount += 1
         self.music.toggleJumpSound(self.jumpCount)
