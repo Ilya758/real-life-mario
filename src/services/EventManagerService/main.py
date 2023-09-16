@@ -1,5 +1,5 @@
 import pygame
-from enums import GameEventType
+from src.enums import GameEventType
 
 
 class EventManagerService:

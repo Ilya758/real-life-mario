@@ -1,6 +1,6 @@
 import random
-from constants import BLOCK_SIZE, HEIGHT
-from entities.environment.units import Block
+from src.constants import BLOCK_SIZE, HEIGHT
+from src.entities.environment.units import Block
 
 
 class Ground:

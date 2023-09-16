@@ -1,7 +1,6 @@
 import pygame
-
-from entities.environment.abstract import Object
-from services import GraphicsService
+from src.entities.environment.abstract import Object
+from src.services import GraphicsService
 
 
 class Block(Object):

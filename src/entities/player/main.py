@@ -1,7 +1,7 @@
 import pygame
-from constants import PLAYER_VEL
-from enums import GameEventType, Jump, Y_AxisBoundary, ChannelAction
-from services import CollisionService, GraphicsService, MusicService
+from src.constants import PLAYER_VEL
+from src.enums import GameEventType, Jump, Y_AxisBoundary, ChannelAction
+from src.services import CollisionService, GraphicsService
 
 
 class Player(pygame.sprite.Sprite):
