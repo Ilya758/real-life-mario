@@ -43,6 +43,3 @@ class Ground:
                 cooldown = True
             tile += len
 
-# TODO:
-# look at dynamic backgrounds
-# change main player sprite

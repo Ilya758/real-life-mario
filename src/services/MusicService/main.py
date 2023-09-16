@@ -17,7 +17,7 @@ class MusicService:
         return sound
 
     def initMixerChannels(self):
-        channels = [['jump', 0.25], ['death', 0.5], ['fart', 0.05]]
+        channels = [['jump', 0.25], ['death', 0.5]]
 
         return {ch: [i + 1, self.makeSound(ch, vol)] for i, [ch, vol] in enumerate(channels)}
 
@@ -35,11 +35,5 @@ class MusicService:
             case ChannelAction.Stop.value:
                 channel.stop()
 
-    def toggleJumpSound(self, jump: Jump):
-        match jump:
-            case Jump.Single.value:
-                self.triggerSoundAction('jump', ChannelAction.Play.value)
-                self.triggerSoundAction('fart', ChannelAction.Stop.value)
-            case Jump.Double.value:
-                self.triggerSoundAction('jump', ChannelAction.Stop.value)
-                self.triggerSoundAction('fart', ChannelAction.Play.value)
+    def toggleJumpSound(self):
+        self.triggerSoundAction('jump', ChannelAction.Play.value)

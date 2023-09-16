@@ -28,7 +28,7 @@ class Player(pygame.sprite.Sprite):
         self.y_vel = -self.GRAVITY * 12
         self.animation_count = 0
         self.jumpCount += 1
-        self.music.toggleJumpSound(self.jumpCount)
+        self.music.toggleJumpSound()
 
         if self.jumpCount == Jump.Single.value:
             self.fall_count = 0
@@ -107,14 +107,8 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_d] and not collideRight:
             self.moveRight(PLAYER_VEL)
 
-        verticalCollide = CollisionService.handleVerticalCollisions(
+        CollisionService.handleVerticalCollisions(
             self, objects, self.y_vel)
-        toCheck = [collideLeft, collideRight, *verticalCollide]
-
-        for obj in toCheck:
-            if obj and obj.name == 'fire':
-                if not self.hit:
-                    self.makeHit()
 
     def updateSprite(self):
         spriteSheet = 'idle'
